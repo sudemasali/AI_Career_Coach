@@ -1,0 +1,48 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User{
+  id String @id @default(cuid())
+  email String @unique
+  password String
+
+  cvs CV[]
+  roadmaps Roadmap[]
+}
+
+model CV{
+  id String @id @default(cuid())
+  fileName String
+  uploadDate DateTime @default(now())
+  cvText String?
+
+  userId String 
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Roadmap{
+  id String @id @default(cuid())
+  targetRole String
+
+  userId String
+  user User @relation(fields:[userId], references:[id])
+  skills RoadmapSkill[]
+}
+
+model RoadmapSkill{
+  id String @id @default(cuid())
+  skillName String
+  description String
+  isCompleted Boolean @default(false)
+  order Int
+
+  roadmapId String
+  roadmap Roadmap @relation(fields:[roadmapId], references:[id])
+}
